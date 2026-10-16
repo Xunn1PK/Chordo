@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { importSetlistFile } from "$lib/export/exportHelper"
     import { Settings, type PageSwitchAnimation } from "$lib/models/Settings"
     import { openConfirm } from "$lib/state/confirm.svelte"
     import { getLocale, SUPPORTED_LANGUAGES, t, type SupportedLocale } from "$lib/state/i18n.svelte"
@@ -15,8 +14,8 @@
     let currentLanguage = $derived<SupportedLocale>(getLocale())
     let currentTheme = $derived<SupportedTheme>(getTheme())
     const sortedLanguages = [...SUPPORTED_LANGUAGES].sort((a, b) => a.label.localeCompare(b.label))
-    let fileInputRef = $state<HTMLInputElement | null>(null)
     let importStatus = $state<string | null>(null)
+    let isImporting = $state(false)
 
     // Paper options state
     const isSongSettings = $derived(
@@ -123,30 +122,17 @@
         URL.revokeObjectURL(url)
     }
 
-    function triggerImport() {
-        if (fileInputRef) {
-            fileInputRef.click()
-        }
-    }
-
-    async function handleFileImport(e: Event) {
-        const target = e.target as HTMLInputElement
-        const file = target.files?.[0]
-        if (!file) return
-
+    async function importRemoteData() {
+        if (isImporting) return
+        isImporting = true
+        importStatus = null
         try {
-            const text = await file.text()
-            const parsed = JSON.parse(text)
+            const response = await fetch("https://raw.githubusercontent.com/Xunn1PK/preobrazhenie-songs/refs/heads/main/songs.json")
+            if (!response.ok) throw new Error(`Request failed with status ${response.status}`)
+            const parsed = await response.json()
 
-            if (!parsed || typeof parsed !== "object") {
+            if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.songs)) {
                 importStatus = t("settings", "import_invalid")
-                return
-            }
-
-            if ((parsed.type === "list" && parsed.list) || (parsed.type === "song" && parsed.song)) {
-                closeDialog()
-                await importSetlistFile(file)
-                if (target) target.value = ""
                 return
             }
 
@@ -157,12 +143,13 @@
                 onConfirm: () => {
                     storage.importData(parsed)
                     importStatus = t("settings", "import_success")
-                    if (target) target.value = ""
                 }
             })
         } catch (err) {
-            console.error("Failed to import file:", err)
+            console.error("Failed to load remote songs:", err)
             importStatus = t("settings", "import_error")
+        } finally {
+            isImporting = false
         }
     }
 
@@ -361,8 +348,6 @@
                     {t("settings", "data_management")}
                 </div>
 
-                <input bind:this={fileInputRef} type="file" accept=".json,application/json" style="display: none;" onchange={handleFileImport} />
-
                 <div class="settings-actions">
                     <div class="data-actions-row">
                         <md-outlined-button onclick={exportBackup}>
@@ -370,8 +355,8 @@
                             {t("settings", "export_data")}
                         </md-outlined-button>
 
-                        <md-outlined-button onclick={triggerImport}>
-                            <span class="material-symbols-outlined" slot="icon">upload</span>
+                        <md-outlined-button onclick={importRemoteData} disabled={isImporting}>
+                            <span class="material-symbols-outlined" slot="icon">cloud_download</span>
                             {t("settings", "import_data")}
                         </md-outlined-button>
                     </div>
