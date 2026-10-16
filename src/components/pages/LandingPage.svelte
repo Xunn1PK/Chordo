@@ -125,6 +125,11 @@
                         <span>ChurchApps</span>
                         <span class="material-symbols-outlined open-icon">open_in_new</span>
                     </a>
+                    <span>&</span>
+                    <a href="https://github.com/Xunn1PK" target="_blank" rel="noopener noreferrer" class="churchapps-link">
+                        <span>Xunn1PK</span>
+                        <span class="material-symbols-outlined open-icon">open_in_new</span>
+                    </a>
                 </div>
             </div>
         </div>

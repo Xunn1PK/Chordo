@@ -1,7 +1,7 @@
-## ❗❗IMPORTANT❗❗
-This fork is mainly created for my local church, so our team can more easily get songs from 1 remote database. However you can make your own fork and replace our database link (in scr/components/popups/SettingsDialog.svetle) with your. Maybe somewhen i'll make more conviniet and universal fork for everyone, but yeah
+## ❗❗ IMPORTANT ❗❗
+This fork is created mainly for my local church, so our team could get the same songs database without manual .json file import/export. It is not supposed for average user's usage. However, maybe someday i will softcode some things and it will be usable for anybody. Also it is vibecoded. Just don't take this fork really seriously. Have a good day ;)
 
-***__BIG__** thx to Kristoffer Vassbø and Jeremy Zongker for making this such a [great app](https://github.com/ChurchApps/Chordo) <3*
+***BIG** thx to Kristoffer Vassbø for making such a [awesome app](https://github.com/ChurchApps/Chordo) <3*
 
 # Chordo: Chord Sheet Manager
 

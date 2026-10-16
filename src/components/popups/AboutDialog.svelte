@@ -65,6 +65,10 @@
             <span class="material-symbols-outlined author-icon">favorite</span>
             Made in Norway by Kristoffer Vassbø for ChurchApps
         </div>
+        <div class="about-author">
+            Forked by Xunn1PK for Церковь «Преображение»
+            <span class="material-symbols-outlined author-icon">favorite</span>
+        </div>
     </div>
 
     <div slot="actions">
