@@ -206,7 +206,7 @@
         "theme": "Theme color",
         "data_management": "Data management",
         "export_data": "Export all data",
-        "import_data": "Import all data",
+        "import_data": "Load database",
         "reset_data": "Reset all data",
         "done": "Done",
         "import_success": "Data imported successfully!",
@@ -215,8 +215,8 @@
         "reset_confirm_title": "Reset all data?",
         "reset_confirm_msg": "This will permanently delete all songs, folders, and setlists. This action cannot be undone.",
         "reset_confirm_btn": "Reset",
-        "import_confirm_title": "Import backup?",
-        "import_confirm_btn": "Import"
+        "import_confirm_title": "Load database?",
+        "import_confirm_btn": "Load"
     },
     "about": {
         "tagline": "Chord Sheet Manager",
