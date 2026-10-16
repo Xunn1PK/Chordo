@@ -219,8 +219,8 @@
         "import_confirm_btn": "Load"
     },
     "about": {
-        "tagline": "Chord Sheet Manager",
-        "version": "Version",
+        "tagline": "Original by ChurchApps, fork by Xunn1PK",
+        "version": "Forked Version",
         "desc": "Organize, transpose, annotate, and view chord sheets.",
         "landing_page": "Features & Overview",
         "source_code": "Source Code",
