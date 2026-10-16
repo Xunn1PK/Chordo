@@ -108,7 +108,7 @@
 
             <div class="footer-bottom">
                 <div class="footer-links">
-                    <a href="https://github.com/ChurchApps/Chordo" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    <a href="https://github.com/Xunn1P/Chordo" target="_blank" rel="noopener noreferrer" class="footer-link">
                         <span class="material-symbols-outlined">code</span>
                         <span>GitHub</span>
                     </a>
