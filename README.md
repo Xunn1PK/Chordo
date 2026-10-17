@@ -1,7 +1,9 @@
-## ❗❗ IMPORTANT ❗❗
-This fork is created mainly for my local church, so our team could get the same songs database without manual .json file import/export. It is not supposed for average user's usage. However, maybe someday i will softcode some things and it will be usable for anybody. Also it is vibecoded. Just don't take this fork really seriously. Have a good day ;)
+> [!NOTE]
+> This fork was created primarily for my local church team to automatically sync our song database without manually importing or exporting .json files.
+>
+> It is not intended for general public. However, I might softcode a few things in the future to make it customizable for anyone. Also, keep in mind that this project was mostly vibecoded, so don't take it too seriously. Have a great day!
 
-***BIG** thx to Kristoffer Vassbø for making such a [awesome app](https://github.com/ChurchApps/Chordo) <3*
+*Big thanks to Kristoffer Vassbø for creating such an [awesome app](https://github.com/ChurchApps/Chordo)! <3*
 
 # Chordo: Chord Sheet Manager
 
