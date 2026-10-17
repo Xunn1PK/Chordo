@@ -4,6 +4,7 @@
     import { getLocale, SUPPORTED_LANGUAGES, t, type SupportedLocale } from "$lib/state/i18n.svelte"
     import { fullscreenState, menuState, popupState, setActivePopup, setFullscreenLyricsOnly } from "$lib/state/menu.svelte"
     import { getTheme, SUPPORTED_THEMES, type SupportedTheme } from "$lib/state/theme.svelte"
+    import { showToast } from "$lib/state/toast.svelte"
     import storage from "$lib/storage/StorageManager.svelte"
     import "@material/web/iconbutton/filled-tonal-icon-button.js"
     import "@material/web/select/outlined-select.js"
@@ -16,6 +17,7 @@
     const sortedLanguages = [...SUPPORTED_LANGUAGES].sort((a, b) => a.label.localeCompare(b.label))
     let importStatus = $state<string | null>(null)
     let isImporting = $state(false)
+    let isExporting = $state(false)
 
     // Paper options state
     const isSongSettings = $derived(
@@ -105,21 +107,69 @@
         storage.persist()
     }
 
-    function exportBackup() {
-        const data = {
-            folders: storage.folders,
-            lists: storage.lists,
-            songs: storage.songs,
-            settings: storage.settings,
-            exportedAt: new Date().toISOString()
+    async function exportBackup() {
+        if (isExporting) return
+        isExporting = true
+        try {
+            let token = localStorage.getItem("gh_token")
+            if (!token) {
+                token = window.prompt(t("settings", "export_token_prompt"))?.trim() || null
+                if (!token) return
+                localStorage.setItem("gh_token", token)
+            }
+
+            const fileUrl = "https://api.github.com/repos/Xunn1PK/preobrazhenie-songs/contents/songs.json"
+            const headers = {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28"
+            }
+            const currentFileResponse = await fetch(fileUrl, { headers })
+            if (!currentFileResponse.ok) {
+                const error = await currentFileResponse.json().catch(() => null)
+                throw new Error(error?.message || `GitHub request failed (${currentFileResponse.status})`)
+            }
+
+            const currentFile = await currentFileResponse.json()
+            if (typeof currentFile.sha !== "string") {
+                throw new Error("GitHub did not return the current file SHA")
+            }
+
+            const data = {
+                folders: storage.folders,
+                lists: storage.lists,
+                songs: storage.songs,
+                settings: storage.settings,
+                exportedAt: new Date().toISOString()
+            }
+            const bytes = new TextEncoder().encode(JSON.stringify(data, null, 2))
+            let binary = ""
+            for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+                binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000))
+            }
+
+            const updateResponse = await fetch(fileUrl, {
+                method: "PUT",
+                headers: { ...headers, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: "Update songs via Chordo app",
+                    content: btoa(binary),
+                    sha: currentFile.sha
+                })
+            })
+            if (!updateResponse.ok) {
+                const error = await updateResponse.json().catch(() => null)
+                throw new Error(error?.message || `GitHub request failed (${updateResponse.status})`)
+            }
+
+            showToast(t("settings", "export_success"), "success")
+        } catch (err) {
+            console.error("Failed to export data to GitHub:", err)
+            const message = err instanceof Error ? err.message : String(err)
+            showToast(`${t("settings", "export_error")} ${message}`, "error")
+        } finally {
+            isExporting = false
         }
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement("a")
-        a.href = url
-        a.download = `sheet-manager-backup-${new Date().toISOString().slice(0, 10)}.json`
-        a.click()
-        URL.revokeObjectURL(url)
     }
 
     async function importRemoteData() {
@@ -350,8 +400,8 @@
 
                 <div class="settings-actions">
                     <div class="data-actions-row">
-                        <md-outlined-button onclick={exportBackup}>
-                            <span class="material-symbols-outlined" slot="icon">download</span>
+                        <md-outlined-button onclick={exportBackup} disabled={isExporting}>
+                            <span class="material-symbols-outlined" slot="icon">cloud_upload</span>
                             {t("settings", "export_data")}
                         </md-outlined-button>
 
